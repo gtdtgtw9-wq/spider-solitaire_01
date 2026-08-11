@@ -1,7 +1,7 @@
 // Spider Solitaire Service Worker
 // キャッシュのバージョンを上げると、古いキャッシュは自動的に破棄されて新しいファイルに入れ替わる。
 // index.html / style.css / script.js のいずれかを更新した際は CACHE_VERSION の数字を1つ上げること。
-const CACHE_VERSION = "v2";
+const CACHE_VERSION = "v3";
 const CACHE_NAME = "spider-solitaire-" + CACHE_VERSION;
 
 const ASSETS_TO_CACHE = [
@@ -17,7 +17,19 @@ const ASSETS_TO_CACHE = [
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS_TO_CACHE))
+    caches.open(CACHE_NAME).then((cache) => {
+      // { cache: "reload" } でブラウザのHTTPキャッシュを迂回し、
+      // GitHub Pages側のキャッシュヘッダに関わらず必ずネットワークから最新版を取得する
+      return Promise.all(
+        ASSETS_TO_CACHE.map((url) =>
+          fetch(url, { cache: "reload" }).then((response) => {
+            if (response && response.ok) {
+              return cache.put(url, response);
+            }
+          })
+        )
+      );
+    })
   );
   self.skipWaiting();
 });
