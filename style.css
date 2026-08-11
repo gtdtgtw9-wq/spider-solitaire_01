@@ -8,7 +8,9 @@
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
   html,body{
-    margin:0;padding:0;height:100%;
+    margin:0;padding:0;
+    position:fixed;
+    inset:0;
     font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Hiragino Kaku Gothic ProN",sans-serif;
     background:linear-gradient(180deg,var(--felt-top),var(--felt-bottom));
     color:#fff;
