@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Spider Solitaire</title>
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0d6b3c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Spider">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" href="icons/icon-192.png">
+
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+  <header>
+    <button class="icon-btn" id="btnNew">新規</button>
+    <h1>♠ Spider Solitaire</h1>
+    <div class="header-btns">
+      <button class="icon-btn" id="btnDifficulty">-</button>
+      <button class="icon-btn" id="btnBg">🖼</button>
+      <button class="icon-btn" id="btnStats">📊</button>
+    </div>
+  </header>
+
+  <div class="stats-bar">
+    <div class="stat-chip"><span class="t">難易度</span><span class="v" id="statDifficulty">-</span></div>
+    <div class="stat-chip"><span class="t">完成</span><span class="v" id="statCompleted">0/8</span></div>
+    <div class="stat-chip"><span class="t">スコア</span><span class="v" id="statScore">500</span></div>
+    <div class="stat-chip"><span class="t">時間</span><span class="v" id="statTime">00:00</span></div>
+  </div>
+
+  <div class="section-divider"></div>
+
+  <div class="game-area">
+    <div class="board-wrap">
+      <div class="board" id="board"></div>
+    </div>
+
+    <div class="control-panel">
+      <div class="control-row">
+        <button class="action-btn" id="btnDeal"><span class="ico">🂠</span>配る</button>
+        <button class="action-btn" id="btnUndo"><span class="ico">↩︎</span>戻す</button>
+        <button class="action-btn" id="btnHint"><span class="ico">💡</span>ヒント</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="banner" id="banner"></div>
+
+<!-- New game / difficulty sheet -->
+<div class="overlay" id="overlayNewGame">
+  <div class="sheet">
+    <h2>新しいゲーム</h2>
+    <button class="sheet-option" data-diff="oneSuit">1スート <small>やさしい</small></button>
+    <button class="sheet-option" data-diff="twoSuits">2スート <small>ふつう</small></button>
+    <button class="sheet-option" data-diff="fourSuits">4スート <small>むずかしい</small></button>
+    <button class="sheet-cancel" id="cancelNewGame">キャンセル</button>
+  </div>
+</div>
+
+<!-- Background image sheet (card / board tabs) -->
+<div class="overlay" id="overlayBg">
+  <div class="sheet">
+    <h2>背景画像設定</h2>
+
+    <div class="bg-tabs">
+      <button class="bg-tab-btn active" id="bgTabBtnCard" data-tab="card">カード用</button>
+      <button class="bg-tab-btn" id="bgTabBtnBoard" data-tab="board">ゲーム部分用</button>
+    </div>
+
+    <div id="bgTabCard">
+      <p class="bg-hint">推奨サイズ 768×1280(縦長)。ランクごとに個別の背景画像を設定できます(未設定のランクは白地のまま)。アップロード時に自動で圧縮されます。</p>
+      <div class="rank-bg-list" id="rankBgList"></div>
+    </div>
+
+    <div id="bgTabBoard" style="display:none;">
+      <div class="bg-preview" id="boardBgPreview">未設定(緑のフェルト背景のまま)</div>
+      <label class="bg-upload-label" for="boardBgFileInput">画像をアップロード</label>
+      <input type="file" accept="image/*" id="boardBgFileInput" style="display:none;">
+      <p class="bg-hint">推奨サイズ 768×1280(縦長)。ゲーム部分全体の背景として敷き詰められます。アップロード時に自動で圧縮されます。</p>
+      <button class="sheet-option" id="btnBoardBgReset" style="text-align:center;justify-content:center;">画像をリセット(フェルト背景に戻す)</button>
+    </div>
+
+    <button class="sheet-cancel" id="closeBg" style="color:#fff;margin-top:8px;">閉じる</button>
+  </div>
+</div>
+
+<!-- Statistics sheet -->
+<div class="overlay" id="overlayStats">
+  <div class="sheet">
+    <h2>統計</h2>
+    <div class="stat-row"><span>開始ゲーム数</span><span id="stGamesStarted">0</span></div>
+    <div class="stat-row"><span>勝利数</span><span id="stGamesWon">0</span></div>
+    <div class="stat-row"><span>最高スコア</span><span id="stBestScore">0</span></div>
+    <div class="stat-row"><span>最短時間</span><span id="stBestTime">-</span></div>
+    <div class="stat-row"><span>最少手数</span><span id="stFewestMoves">-</span></div>
+    <button class="sheet-cancel" id="closeStats" style="color:#fff;margin-top:14px;">閉じる</button>
+  </div>
+</div>
+
+<!-- Win sheet -->
+<div class="overlay" id="overlayWin">
+  <div class="sheet">
+    <div class="win-title">🎉 ゲームクリア！</div>
+    <div class="win-msg" id="winMsg"></div>
+    <button class="sheet-option" id="closeWin" style="text-align:center;justify-content:center;">OK</button>
+  </div>
+</div>
+
+<script src="script.js"></script>
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("sw.js").catch(() => {});
+  });
+}
+</script>
+</body>
+</html>
