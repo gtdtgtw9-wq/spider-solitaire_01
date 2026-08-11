@@ -1,7 +1,7 @@
 // Spider Solitaire Service Worker
 // キャッシュのバージョンを上げると、古いキャッシュは自動的に破棄されて新しいファイルに入れ替わる。
 // index.html / style.css / script.js のいずれかを更新した際は CACHE_VERSION の数字を1つ上げること。
-const CACHE_VERSION = "v3";
+const CACHE_VERSION = "v4";
 const CACHE_NAME = "spider-solitaire-" + CACHE_VERSION;
 
 const ASSETS_TO_CACHE = [
